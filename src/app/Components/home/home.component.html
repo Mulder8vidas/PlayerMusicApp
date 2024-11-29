@@ -1,0 +1,84 @@
+<div class="bg bg-gray-900 w-screen h-screen">
+  <form [formGroup]="Busqueda" class="bg-gray-900 p-6 rounded-lg shadow-md">
+    <div class="flex items-center mb-4">
+      <input
+        type="text"
+        formControlName="busqueda"
+        placeholder="Buscar"
+        class="flex-grow px-4 py-2 rounded-l-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+      />
+      <button
+        (click)="buscar()"
+        class="px-6 py-2 bg-green-600 text-white font-semibold rounded-r-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+      >
+        Buscar
+      </button>
+    </div>
+
+    <div class="resultados" *ngIf="albums != null">
+      <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div
+          *ngFor="let item of albums.albums.items"
+          class="bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition"
+        >
+          <button
+            (click)="cargarCanciones(item.data.uri)"
+            class="text-green-400 font-semibold text-lg hover:underline"
+          >
+            {{ item.data.name }}
+          </button>
+          <div *ngFor="let img of item.data.coverArt.sources; let i = index">
+            <img
+              *ngIf="i == 0"
+              [src]="img.url"
+              alt="Album"
+              class="w-full h-40 object-cover mt-2 rounded-lg"
+            />
+          </div>
+        </div>
+      </div>
+      <section id="canciones">
+        <div class="canciones mt-6" *ngIf="tracks != null">
+          <div
+            *ngFor="let cancion of tracks.albums"
+            class="p-4 bg-gray-800 rounded-lg mb-4"
+          >
+            <span class="text-white font-bold block text-xl mb-2">
+              {{ cancion.name }}
+            </span>
+            <div *ngFor="let tracks of cancion.tracks.items">
+              <div class="flex items-center justify-between bg-gray-900 rounded-lg p-3 mb-2">
+                <span class="text-gray-300">{{ tracks.name }}</span>
+                <audio (play)="handler(tracks)" controls class="h-10">
+                  <source type="audio/mp3" [src]="tracks.preview_url" />
+                </audio>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </form>
+  <app-default-view [busquedaEstado]="busquedaState"></app-default-view>
+</div>
+
+<!-- Lista de Canciones Reproducidas -->
+<div
+  class="fixed bottom-0 left-0 w-full bg-gray-800 h-32 lg:h-48 p-4 border-t border-gray-700 overflow-y-auto"
+>
+  <!-- Línea separadora arriba -->
+  <div class="border-t border-green-300 mb-3"></div>
+
+  <h3 class="text-green-400 font-semibold mb-3">Últimas Canciones Reproducidas</h3>
+  <div class="space-y-2">
+    <div
+      *ngFor="let item of misCanciones"
+      class="flex items-center justify-between bg-gray-900 p-3 rounded-lg"
+    >
+      <span class="text-gray-300 truncate">{{ item.name }}</span>
+      <audio controls class="h-10">
+        <source type="audio/mp3" [src]="item.preview_url" />
+      </audio>
+    </div>
+  </div>
+</div>
